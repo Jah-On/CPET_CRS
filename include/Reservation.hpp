@@ -10,9 +10,6 @@ enum class ReservationResult {
 };
 
 class Reservation {
-private:
-	uint8_t               cost;
-	std::optional<Member> assignee;
 public:
 	Reservation(uint8_t cost);
 
@@ -23,4 +20,7 @@ public:
 	// Accessors
 	bool              isTaken();
 	std::string       assinedTo();
+private:
+	uint8_t               cost;
+	std::optional<Member> assignee;
 };
