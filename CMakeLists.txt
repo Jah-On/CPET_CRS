@@ -5,23 +5,18 @@ PROJECT(CPET_CRS)
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
+# Include OGL
+find_library(OpenGL_LIBRARY OpenGL )
+
 # Include GLFW
-include_directories(external/glfw)
+SET(GLFW_BUILD_X11 0)
+include_directories(external/glfw/include)
+add_subdirectory(external/glfw)
 
 # Include ImGui
-include_directories(external/imgui)
-
-# Include OpenGL
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    include_directories ( /System/Library/Frameworks )
-    find_library(OpenGL_LIBRARY OpenGL )
-    set(EXTRA_LIBS ${OpenGL_LIBRARY})
-    target_link_libraries(runs_client ${EXTRA_LIBS})
-elseif (WIN32)
-link_libraries(opengl32)
-elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-link_libraries(GL)
-endif()
+include_directories(external/imgui external/imgui/backends)
+file(GLOB IMGUI external/imgui/*.cpp)
+add_library(imgui ${IMGUI})
 
 # Include project headers
 include_directories(include)
@@ -29,3 +24,6 @@ include_directories(include)
 file(GLOB SRC src/*.cpp)
 
 add_executable(CPET_CRS ${SRC})
+# target_link_libraries(CPET_CRS OpenGL::OpenGL)
+target_link_libraries(CPET_CRS glfw)
+target_link_libraries(CPET_CRS imgui)

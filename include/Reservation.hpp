@@ -1,7 +1,7 @@
 #include <cstdint>
 #include <optional>
 #include <string>
-#include "Member.hpp"
+#include <Member.hpp>
 
 enum class ReservationResult {
 	SUCCESS,
