@@ -21,7 +21,7 @@ file(GLOB IMGUI
 	external/imgui/*.cpp
 	external/imgui/backends/imgui_impl_opengl3.cpp
 	external/imgui/backends/imgui_impl_glfw.cpp
-	external/imgui/misc/freetype/imgui_freetype.cpp
+	external/imgui/misc/cpp/imgui_stdlib.cpp
 )
 add_library(imgui ${IMGUI})
 

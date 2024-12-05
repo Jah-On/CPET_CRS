@@ -1,6 +1,7 @@
 #include "GLFW/glfw3.h"
 #include "backends/imgui_impl_glfw.h"
 #include "imgui.h"
+#include "misc/cpp/imgui_stdlib.h"
 #include <GUI/GUI.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -13,6 +14,7 @@ constexpr char memberSelectInfoFmt[] = "Name: {}\nCredits: {}###{}";
 
 const int ROOT_WINDOW_FLAGS = (
 	ImGuiWindowFlags_NoMove |
+	ImGuiWindowFlags_MenuBar |
 	ImGuiWindowFlags_NoResize |
  	ImGuiWindowFlags_NoCollapse |
   	ImGuiWindowFlags_NoDecoration
@@ -20,7 +22,7 @@ const int ROOT_WINDOW_FLAGS = (
 
 const ImVec2 MEMBER_PANEL_DIMENSIOSN = {
 	0.25f,
-	0.985f
+	0.94f
 };
 
 void GUI::drawMembers(){
@@ -140,6 +142,69 @@ GUI::GUI(std::string title, uint16_t width, uint16_t height){
     ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
+void GUI::drawCurrentPopup(){
+	if (popupState == NONE) return;
+
+	if (!ImGui::IsPopupOpen("###message")) ImGui::OpenPopup("###message");
+	if (!ImGui::BeginPopupModal(
+		"###message",
+		NULL,
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_Modal | ImGuiWindowFlags_Popup | ImGuiWindowFlags_AlwaysAutoResize
+	)) return;
+
+	switch (popupState) {
+	case MESSAGE:
+		if (!popupMessage.has_value()) return;
+		ImGui::Text("%s", popupMessage.value().c_str());
+		if (ImGui::Button("Ok##popupClose")){
+			popupState = NONE;
+			popupMessage.reset();
+			ImGui::CloseCurrentPopup();
+		}
+		break;
+	case INPUT:
+		ImGui::InputTextWithHint("##pinInput", "Enter reservation pin...", popupInput.data(), 9, ImGuiInputTextFlags_CharsDecimal);
+		if (ImGui::Button("Ok##popupClose")){
+			popupState = NONE;
+			popupMessage.reset();
+			ImGui::CloseCurrentPopup();
+
+			ReservationResult status = popupReservationToDrop->drop(popupInput);
+
+			if (status != ReservationResult::SUCCESS){
+				popupReservationToDrop = nullptr;
+				popupMessage = "Invalid pin given, keeping reservation.";
+				popupState   = MESSAGE;
+			}
+
+			memset(popupInput.data(), 0, 8);
+		}
+		break;
+	case EXPORT_ALL:
+		ImGui::Text("This requires admin privaledges.");
+		ImGui::InputTextWithHint("##adminInput", "Enter admin password...", &popupExportAllPassword, ImGuiInputTextFlags_Password);
+		if (ImGui::Button("Ok##popupClose")){
+			popupState = NONE;
+			popupMessage.reset();
+			ImGui::CloseCurrentPopup();
+
+			if (popupExportAllPassword != "grasshopper frappi"){
+				popupMessage = "Invalid admin password.";
+				popupState   = MESSAGE;
+			} else {
+				exportAll();
+			}
+
+			popupExportAllPassword.clear();
+		}
+	default:
+		break;
+	}
+
+	ImGui::EndPopup();
+}
+
 bool GUI::run(){
 	if (wmHandle == nullptr) return false;
 
@@ -157,12 +222,10 @@ bool GUI::run(){
         ImGui::PopStyleVar();
 
         drawMenuBar();
-
         drawMembers();
         drawVehicles();
-        drawCurrentPopup();
 
-        ImGui::ShowDemoWindow();
+        drawCurrentPopup();
 
         ImGui::End();
 
@@ -179,6 +242,8 @@ bool GUI::run(){
 	// Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
+
+    exportMembers();
 
     return true;
 }

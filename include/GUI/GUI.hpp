@@ -18,10 +18,34 @@
 
 class GUI {
 public:
+	/*
+		GUI class constructor.
+
+		Parameters:
+			std::string title: Sets the window title.
+			uint16_t width: Sets the window width; default is 0 for maximized window.
+			uint16_t height: Sets the window height; default is 0 for maximized window.
+		Returns:
+			Class instance.
+	*/
 	GUI(std::string title, uint16_t width = 0, uint16_t height = 0);
 
+	/*
+		Provides the GUI with a list of club members.
+
+		Parameters:
+			std::vector<Member>& members: Reference vector
+				containing the club members.
+		Returns:
+	*/
 	void setMembersList(std::vector<Member>& members);
 
+	/*
+		Starts the GUI.
+
+		Parameters:
+		Returns: bool indicating whether the GUI ran successfully.
+	*/
 	bool run();
 private:
 	// Rendering Functions
@@ -47,23 +71,28 @@ private:
 		std::ofstream* open = NULL
 	);
 	void exportAll();
+	void exportMembers();
 
+	// WM and Widget Library Variables
 	int                		width, height;
 	ImGuiContext*           imCtx          = nullptr;
 	ImGuiIO*           		ioHandle       = nullptr;
 	ImGuiViewport*     		vpInfo         = nullptr;
 	GLFWwindow*        		wmHandle       = nullptr;
 
+	// Popup Related Variables
 	enum {
 		NONE,
 		MESSAGE,
-		INPUT
+		INPUT,
+		EXPORT_ALL
 	} popupState = NONE;
-
-	std::optional<std::string> popupMessage = std::nullopt;
-	Pin                        popupInput   = {0};
+	std::optional<std::string> popupMessage          = std::nullopt;
+	Pin                        popupInput            = {0};
 	Reservation*               popupReservationToDrop;
+	std::string                popupExportAllPassword;
 
+	// Vehicles
 	std::array<Pickup,  3>  pickups = {
 		Pickup("Pat Cooper",    VehicleColor::PURPLE),
 		Pickup("Jane Cox",      VehicleColor::GREEN),
@@ -80,6 +109,7 @@ private:
 		Sedan("Jess Quirk",     VehicleColor::GREEN)
 	};
 
+	// Member Info Variables
 	std::vector<Member>		members;
 	Member* 				selectedMember = nullptr;
 };

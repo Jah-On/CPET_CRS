@@ -1,7 +1,35 @@
 #include "imgui.h"
 #include <GUI/GUI.hpp>
+#include <chrono>
+#include <cstdio>
+#include <format>
 #include <fstream>
 #include <string>
+
+void GUI::exportMembers(){
+	std::ofstream file(
+		std::format(
+			"dodgeball_team_{:%Y_%m_%d-%H_%M}.txt",
+			std::chrono::system_clock::now()
+		)
+	);
+
+	if (!file.is_open()){
+		popupMessage = "Could not save file.";
+		popupState   = MESSAGE;
+		return;
+	}
+
+	for (auto& vehicle : pickups)  file << vehicle.getDriver() << std::endl;
+	for (auto& vehicle : compacts) file << vehicle.getDriver() << std::endl;
+	for (auto& vehicle : sedans)   file << vehicle.getDriver() << std::endl;
+
+	for (Member& member : members){
+		file << member.getName() << " " << member.getCredits() << std::endl;
+	}
+
+	file.close();
+}
 
 template<> void GUI::exportVehicle<Pickup>(
 	Pickup& vehicle,
@@ -146,18 +174,18 @@ void GUI::exportAll(){
 }
 
 void GUI::drawMenuBar(){
-	if (!ImGui::BeginMainMenuBar()) return;
+	if (!ImGui::BeginMenuBar()) return;
 
 	if (!ImGui::BeginMenu("Save")){
-		ImGui::EndMainMenuBar();
+		ImGui::EndMenuBar();
 		return;
 	}
 
-	if (ImGui::MenuItem("All Vehicles")) exportAll();
+	if (ImGui::MenuItem("All Vehicles")) popupState = EXPORT_ALL;
 
 	if (!ImGui::BeginMenu("Specific Vehicle")){
 		ImGui::EndMenu();
-		ImGui::EndMainMenuBar();
+		ImGui::EndMenuBar();
 		return;
 	}
 
@@ -175,5 +203,5 @@ void GUI::drawMenuBar(){
 
 	ImGui::EndMenu();
 	ImGui::EndMenu();
-	ImGui::EndMainMenuBar();
+	ImGui::EndMenuBar();
 }

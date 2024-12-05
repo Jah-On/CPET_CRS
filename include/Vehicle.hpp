@@ -14,10 +14,33 @@ enum class VehicleColor {
 
 class Vehicle {
 public:
+	/*
+		Vehicle class constructor. All child ones have the same constructor.
+
+		Parameters:
+			std::string driver: Names the person who owns the vehicle.
+			VehicleColor color: Sets the vehicle's color from the VehicleColor enum.
+		Returns:
+			Class instance.
+	*/
 	Vehicle(std::string driver, VehicleColor color);
 
 	// Accessors
+	/*
+		Gets the driver's name.
+
+		Parameters:
+		Returns:
+			std::string: The driver's name.
+	*/
 	std::string  getDriver() const;
+	/*
+		Gets the vehicles's color.
+
+		Parameters:
+		Returns:
+			VehicleColor: The vehicle's color.
+	*/
 	VehicleColor getColor()  const;
 private:
 	std::string  driver;

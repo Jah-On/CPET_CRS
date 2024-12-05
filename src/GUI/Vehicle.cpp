@@ -167,52 +167,6 @@ void GUI::drawDriver(const std::string& name){
 	ImGui::EndDisabled();
 }
 
-void GUI::drawCurrentPopup(){
-	if (popupState == NONE) return;
-
-	if (!ImGui::IsPopupOpen("###message")) ImGui::OpenPopup("###message");
-	if (!ImGui::BeginPopupModal(
-		"###message",
-		NULL,
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_Modal | ImGuiWindowFlags_Popup | ImGuiWindowFlags_AlwaysAutoResize
-	)) return;
-
-	switch (popupState) {
-	case MESSAGE:
-		if (!popupMessage.has_value()) return;
-		ImGui::Text("%s", popupMessage.value().c_str());
-		if (ImGui::Button("Ok##popupClose")){
-			popupState = NONE;
-			popupMessage.reset();
-			ImGui::CloseCurrentPopup();
-		}
-		break;
-	case INPUT:
-		ImGui::InputTextWithHint("##pinInput", "Enter reservation pin...", popupInput.data(), 9, ImGuiInputTextFlags_CharsDecimal);
-		if (ImGui::Button("Ok##popupClose")){
-			popupState = NONE;
-			popupMessage.reset();
-			ImGui::CloseCurrentPopup();
-
-			ReservationResult status = popupReservationToDrop->drop(popupInput);
-
-			if (status != ReservationResult::SUCCESS){
-				popupReservationToDrop = nullptr;
-				popupMessage = "Invalid pin given, keeping reservation.";
-				popupState   = MESSAGE;
-			}
-
-			memset(popupInput.data(), 0, 8);
-		}
-		break;
-	default:
-		break;
-	}
-
-	ImGui::EndPopup();
-}
-
 void GUI::drawReservation(Reservation& seat){
 	bool buttonState;
 	bool memberSelected = selectedMember != NULL;
