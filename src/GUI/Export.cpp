@@ -1,6 +1,7 @@
 #include "imgui.h"
 #include <GUI/GUI.hpp>
 #include <chrono>
+#include <cstdint>
 #include <cstdio>
 #include <format>
 #include <fstream>
@@ -25,7 +26,7 @@ void GUI::exportMembers(){
 	for (auto& vehicle : sedans)   file << vehicle.getDriver() << std::endl;
 
 	for (Member& member : members){
-		file << member.getName() << " " << member.getCredits() << std::endl;
+		file << member.getName() << " " << std::to_string(member.getCredits()) << std::endl;
 	}
 
 	file.close();
