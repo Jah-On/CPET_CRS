@@ -38,7 +38,7 @@ std::vector<Member> loadMembers(){
 int main(){
 	std::vector<Member> memberList = loadMembers();
 
-	GUI ui = GUI("Demo");
+	GUI ui = GUI("CPET CRS");
 
 	ui.setMembersList(memberList);
 
