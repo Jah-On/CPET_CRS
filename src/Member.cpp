@@ -3,8 +3,9 @@
 
 // Constructor
 Member::Member(const std::string name, uint8_t credits) {
-	this->name    = name;
-	this->credits = credits;
+	this->name        = name;
+	this->credits     = credits;
+	this->reservation = false;
 }
 
 // Accessors
