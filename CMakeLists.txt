@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.30)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.29)
 PROJECT(CPET_CRS)
 
 # Set C++ stuff
@@ -31,4 +31,4 @@ include_directories(include)
 file(GLOB SRC src/*.cpp src/GUI/*.cpp)
 
 add_executable(CPET_CRS ${SRC})
-target_link_libraries(CPET_CRS GL glfw imgui)
+target_link_libraries(CPET_CRS OpenGL::GL glfw imgui)
