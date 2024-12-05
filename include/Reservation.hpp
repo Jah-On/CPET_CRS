@@ -1,12 +1,16 @@
+#include <array>
 #include <cstdint>
 #include <optional>
 #include <string>
 #include <Member.hpp>
 
+typedef std::array<char, 9> Pin;
+
 enum class ReservationResult {
 	SUCCESS,
 	ALREADY_TAKEN,
-	INVALID_PIN
+	INVALID_PIN,
+	TOO_FEW_CREDITS
 };
 
 class Reservation {
@@ -14,13 +18,17 @@ public:
 	Reservation(uint8_t cost);
 
 	// Modifiers
-	ReservationResult take(Member member, std::string pin);
-	ReservationResult drop(std::string pin);
+	ReservationResult take(Member& member);
+	ReservationResult drop(Pin&    pin);
 
 	// Accessors
-	bool              isTaken();
-	std::string       assinedTo();
+	bool              isTaken()   const;
+	std::string       assinedTo() const;
+	Pin               getPin()    const;
 private:
-	uint8_t               cost;
-	std::optional<Member> assignee;
+	void              generatePin();
+
+	uint8_t           cost;
+	Member*           assignee;
+	Pin               pin;
 };
