@@ -14,6 +14,8 @@ git submodule update --init --recursive
 cd CPET_CRS
 cmake .
 cmake --build .
+# Run with
+./CPET_CRS
 ```
 
 ### Windows
