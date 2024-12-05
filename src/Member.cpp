@@ -1,5 +1,4 @@
 #include "Member.hpp"
-#include <iostream>
 #include <string>
 
 // Constructor
@@ -13,11 +12,19 @@ std::string Member::getName() const {
   return name;
 }
 
-uint8_t Member::getCredits(){
+uint8_t Member::getCredits() const {
     return credits;
+}
+
+bool Member::hasReservation() const {
+	return reservation;
 }
 
 // Mutators
 void Member::changeCredits(int8_t amount){
     this->credits += amount;
+}
+
+void Member::hasReservation(bool state){
+	reservation = state;
 }

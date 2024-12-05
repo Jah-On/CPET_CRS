@@ -15,11 +15,13 @@ SET(GLFW_BUILD_WAYLAND TRUE)
 SET(GLFW_BUILD_X11     FALSE)
 
 # Include ImGui
+include_directories(/usr/include/freetype2)
 include_directories(external/imgui external/imgui/backends)
 file(GLOB IMGUI
 	external/imgui/*.cpp
 	external/imgui/backends/imgui_impl_opengl3.cpp
 	external/imgui/backends/imgui_impl_glfw.cpp
+	external/imgui/misc/freetype/imgui_freetype.cpp
 )
 add_library(imgui ${IMGUI})
 

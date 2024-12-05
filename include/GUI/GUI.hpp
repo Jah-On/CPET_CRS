@@ -24,6 +24,9 @@ public:
 
 	bool run();
 private:
+	// Rendering Functions
+	void drawMenuBar();
+
 	void drawMembers();
 	void drawVehicles();
 	void drawPickup(Pickup& pickup);
@@ -31,8 +34,19 @@ private:
 	void drawSedan(Sedan& sedan);
 
 	void drawDriver(const std::string& name);
+	void drawReservation(Reservation& seat);
 
 	void drawCurrentPopup();
+
+	// Export Functions
+	template <class T>
+	void exportVehicle(
+		T& vehicle,
+		std::string title,
+		std::string file,
+		std::ofstream* open = NULL
+	);
+	void exportAll();
 
 	int                		width, height;
 	ImGuiContext*           imCtx          = nullptr;

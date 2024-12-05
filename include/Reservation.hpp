@@ -1,6 +1,5 @@
 #include <array>
 #include <cstdint>
-#include <optional>
 #include <string>
 #include <Member.hpp>
 
@@ -25,6 +24,7 @@ public:
 	bool              isTaken()   const;
 	std::string       assinedTo() const;
 	Pin               getPin()    const;
+	uint8_t           getCost()   const;
 private:
 	void              generatePin();
 

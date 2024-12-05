@@ -1,10 +1,8 @@
 #include <Reservation.hpp>
-#include <array>
 #include <cstddef>
+#include <cstdint>
 #include <cstdlib>
 #include <ctime>
-#include <iostream>
-#include <optional>
 #include <string>
 
 Reservation::Reservation(uint8_t cost) : cost(cost) {
@@ -17,6 +15,7 @@ ReservationResult Reservation::take(Member& member) {
     if ((member.getCredits() - cost) < 0) return ReservationResult::TOO_FEW_CREDITS;
 
     assignee = &member;
+    assignee->hasReservation(true);
     assignee->changeCredits(-cost);
     generatePin();
 
@@ -31,6 +30,7 @@ ReservationResult Reservation::drop(Pin& pin) {
     }
 
     assignee->changeCredits(cost); // Refund credits
+    assignee->hasReservation(false);
     assignee = nullptr; // Mark as not taken
 
     return ReservationResult::SUCCESS;
@@ -43,11 +43,15 @@ bool Reservation::isTaken() const {
 std::string Reservation::assinedTo() const {
     if (isTaken()) return assignee->getName();
 
-    return "";
+    return "Unassigned";
 }
 
 Pin Reservation::getPin() const {
 	return pin;
+}
+
+uint8_t Reservation::getCost() const {
+	return cost;
 }
 
 void Reservation::generatePin(){

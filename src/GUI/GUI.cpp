@@ -2,14 +2,11 @@
 #include "backends/imgui_impl_glfw.h"
 #include "imgui.h"
 #include <GUI/GUI.hpp>
-#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <format>
-#include <iostream>
 #include <string>
 #include <sys/types.h>
-#include <thread>
 #include <vector>
 
 constexpr char memberSelectInfoFmt[] = "Name: {}\nCredits: {}###{}";
@@ -58,6 +55,9 @@ void GUI::drawMembers(){
 		ImGui::TableSetColumnIndex(0);
 
 		match = selectedMember == &member;
+
+		if (member.hasReservation()) ImGui::BeginDisabled();
+
 		selected = ImGui::Selectable(
 			std::format(
 				memberSelectInfoFmt,
@@ -68,6 +68,11 @@ void GUI::drawMembers(){
 			match,
 			ImGuiSelectableFlags_None
 		);
+
+		if (member.hasReservation()){
+			ImGui::SetItemTooltip("Already has a seat...");
+			ImGui::EndDisabled();
+		}
 
 		switch (selected) {
 			case false: continue;
@@ -125,7 +130,6 @@ GUI::GUI(std::string title, uint16_t width, uint16_t height){
     this->vpInfo   =  ImGui::GetMainViewport();
 
     ImGui::StyleColorsDark();
-
     ioHandle->Fonts->AddFontFromMemoryTTF(
    		(void*)ROBOTO_MONO_DATA,
      	sizeof(ROBOTO_MONO_DATA),
@@ -151,6 +155,8 @@ bool GUI::run(){
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
         ImGui::Begin("##root", nullptr, ROOT_WINDOW_FLAGS);
         ImGui::PopStyleVar();
+
+        drawMenuBar();
 
         drawMembers();
         drawVehicles();
